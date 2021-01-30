@@ -1,0 +1,20 @@
+{
+    "name": "library-nodejs",
+    "version": "1.0.0",
+    "description": "Book Library",
+    "main": "index.js",
+    "dependencies": {
+        "chai": "^4.2.0",
+        "chai-http": "^4.3.0",
+        "koa": "^2.13.1",
+        "koa-body": "^4.2.0",
+        "mocha": "^8.2.1",
+        "should": "^13.2.3"
+    },
+    "scripts": {
+        "test": "mocha --timeout 10000",
+        "start": "node index.js"
+    },
+    "author": "Chandrashekhar Pandey",
+    "license": "ISC"
+}
