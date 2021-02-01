@@ -1,8 +1,9 @@
 'use strict';
 
+const util = require('util') 
+
 exports.createBook = async ctx => {
     try {
-        console.log(ctx.request.body)
         const { book } = ctx.request.body;
         if (!book) {
             throw ({
@@ -101,17 +102,54 @@ exports.deleteBook = async ctx => {
     }
 }
 
-// In progress
+const waitForCallback = () => {
+    return new Promise((resolve, reject) => {
+        getBookList(global.books, 0, (titles) => {
+            resolve(titles)
+        })
+    });
+};
 
-function getBookList(list, index, callback) {
+function getBookList(list, index, callback, titles = '') {
     if (list.length === index)
-        return callback("No books");
-    books += list[index] + '-'
-    setTimeout(getBookList,list, index + 1, callback, 0);
+        return callback(titles);
+    setImmediate(getBookList, list, index + 1, callback, titles += list[index] + '-');
 }
 
-exports.getBooks = async ctx => {
-    getBookList(global.books, 0, (books) => {
-        ctx.body = books;
+exports.getBooks = async (ctx) => {
+    ctx.body = await waitForCallback();
+}
+
+
+function saveItemOnDatabase(name, callback) {
+    const interval = parseInt(Math.random() + name.length);
+    setInterval(() => {
+        callback(null, [name, interval])
+    });
+}
+
+const saveBooks = () => {
+    const expectedOutput = {};
+
+    const saveItemOnDatabasePromise = util.promisify(saveItemOnDatabase);
+
+    return new Promise((resolve, reject) => {
+        const loop = async (index, callback) => {
+            if (index === global.books.length)
+                return callback();
+            const bookWithInterval = await saveItemOnDatabasePromise(global.books[index]);
+            result[bookWithInterval[0]] = bookWithInterval[1];
+            setImmediate(loop, index + 1, callback);
+        };
+
+        loop(0, () => {
+            resolve(expectedOutput);
+        })
+
     })
 }
+
+exports.simulate = async (ctx) => {
+    ctx.body = await saveBooks();
+}
+

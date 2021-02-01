@@ -6,18 +6,17 @@ const {
     createBook,
     getBooks,
     deleteBook,
-    updateBook
+    updateBook,
+    simulate
 } = require("./controller/books");
 
 const router = new Router();
 
 router
     .post("/createBook", createBook)
-
-    //In progress
     .get("/books", getBooks)
-
     .delete("/deleteBook/:bookName", deleteBook)
     .patch("/updateBook", updateBook)
+    .put("/simulate", simulate)
 
 module.exports = router;
