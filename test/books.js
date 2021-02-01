@@ -112,11 +112,38 @@ describe("Book APIs", () => {
                 .request(server)
                 .delete(`/deleteBook/${book}`)
                 .end((err, res) => {
-                    if(err) done(err)
+                    if (err) done(err)
                     should(res.status).be.exactly(200);
                     done();
                 });
         });
     });
 
+    describe("Simulate Books", () => {
+        it("Book Simulator", (done) => {
+
+            chai
+                .request(server)
+                .put('/simulate')
+                .end((err, res) => {
+                    if (err) done(err);
+                    should(res.status).be.exactly(200);
+                    done();
+                });
+        });
+    });
+
+    // get all books
+    describe("Fetch all books", () => {
+        it("it should fetch all the books", (done) => {
+            chai
+                .request(server)
+                .get("/books")
+                .end((err, res) => {
+                    if (err) done(err);
+                    should(res.status).be.exactly(200);
+                    done();
+                });
+        });
+    });
 });
