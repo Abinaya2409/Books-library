@@ -138,7 +138,7 @@ const saveBooks = () => {
             if (index === global.books.length)
                 return callback();
             const bookWithInterval = await saveItemOnDatabasePromise(global.books[index]);
-            result[bookWithInterval[0]] = bookWithInterval[1];
+            expectedOutput[bookWithInterval[0]] = bookWithInterval[1];
             setImmediate(loop, index + 1, callback);
         };
 
