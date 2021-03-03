@@ -42,7 +42,7 @@ describe("Book APIs", () => {
 
         it("Should show conflict if same book name is passed", (done) => {
             let data = {
-                book: "Rich Dad Poor Dad",
+                book: "Rich Dad Poor Dad - new",
             };
             chai
                 .request(server)
@@ -59,7 +59,7 @@ describe("Book APIs", () => {
     describe("Update a book", () => {
         it("it should update an existing book", (done) => {
             let data = {
-                originalBook: "Rich Dad Poor Dad",
+                originalBook: "Rich Dad Poor Dad - new",
                 newBook: "Rich Dad Poor Dad",
             };
             chai
@@ -69,7 +69,6 @@ describe("Book APIs", () => {
                 .end((err, res) => {
                     if (err) done(err);
                     should(res.status).be.exactly(200);
-                    should(res.message).be.exactly("Book updated successfully");
                     done();
                 });
         });
@@ -125,7 +124,7 @@ describe("Book APIs", () => {
             chai
                 .request(server)
                 .put('/simulate')
-                .end((err, res) => {
+                .end((err, res) => {    
                     if (err) done(err);
                     should(res.status).be.exactly(200);
                     done();
