@@ -1,6 +1,6 @@
 'use strict';
 
-const util = require('util') 
+const util = require('util')
 
 exports.createBook = async ctx => {
     try {
@@ -75,7 +75,6 @@ exports.updateBook = async ctx => {
 exports.deleteBook = async ctx => {
     try {
         const book = ctx.params.bookName;
-        console.log(book)
         if (!book) {
             throw ({
                 statusCode: 400,
@@ -121,35 +120,33 @@ exports.getBooks = async (ctx) => {
 }
 
 
-function saveItemOnDatabase(name, callback) {
-    const interval = parseInt(Math.random() + name.length);
-    setInterval(() => {
-        callback(null, [name, interval])
-    });
-}
-
-const saveBooks = () => {
-    const expectedOutput = {};
-
-    const saveItemOnDatabasePromise = util.promisify(saveItemOnDatabase);
-
+function saveItemOnDatabase(name, expectedOutput) {
     return new Promise((resolve, reject) => {
+        const interval = parseInt(Math.random() * 100 + name.length);
+        setTimeout(() => {
+            expectedOutput[name] = interval;
+            resolve([name, interval])
+        }, interval)
+    })
+}
+const saveBooks = async () => {
+    const expectedOutput = {};
+    return new Promise((resolve, reject) => {
+        const booksAccumulator = [];
         const loop = async (index, callback) => {
-            if (index === global.books.length)
-                return callback();
-            const bookWithInterval = await saveItemOnDatabasePromise(global.books[index]);
-            expectedOutput[bookWithInterval[0]] = bookWithInterval[1];
-            setImmediate(loop, index + 1, callback);
+            if (index === global.books.length) {
+                await Promise.all(booksAccumulator).then(result => { callback() })
+            } else {
+                booksAccumulator.push(saveItemOnDatabase(global.books[index], expectedOutput))
+                loop(index + 1, callback);
+            }
         };
-
         loop(0, () => {
             resolve(expectedOutput);
         })
-
     })
 }
 
 exports.simulate = async (ctx) => {
     ctx.body = await saveBooks();
 }
-
